@@ -1,0 +1,13 @@
+{
+    "name": "prison-experiment",
+    "version": "1.0.0",
+    "description": "A psychological browser game inspired by the Stanford Prison Experiment",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w"
+    },
+    "devDependencies": {
+        "@types/p5": "^1.7.6",
+        "typescript": "^5.3.3"
+    }
+}
