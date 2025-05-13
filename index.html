@@ -30,6 +30,14 @@
             <button id="action-button"></button>
         </div>
 
+        <div id="dp-choice-screen" class="hidden">
+            <h2>Would you like to ask a dynamic programming question?</h2>
+            <div class="button-group">
+                <button id="dp-yes-button" class="overlay-btn">Yes</button>
+                <button id="dp-no-button" class="overlay-btn">No</button>
+            </div>
+        </div>
+
         <div id="end-screen" class="hidden">
             <div id="result-message"></div>
             <div id="answer-section" class="hidden">
@@ -39,7 +47,7 @@
             <button id="restart-button">Try Again</button>
         </div>
     </div>
-    <script src="src/animations.ts"></script>
-    <script src="dist/script.js"></script>
+    <script type="module" src="dist/animations.js"></script>
+    <script type="module" src="dist/script.js"></script>
 </body>
 </html>

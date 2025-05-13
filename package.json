@@ -4,10 +4,12 @@
     "description": "A psychological browser game inspired by the Stanford Prison Experiment",
     "scripts": {
         "build": "tsc",
-        "watch": "tsc -w"
+        "watch": "tsc --watch",
+        "dev": "concurrently \"npm run watch\" \"live-server --port=8000\""
     },
     "devDependencies": {
         "@types/p5": "^1.7.6",
+        "concurrently": "^9.1.2",
         "typescript": "^5.3.3"
     }
 }

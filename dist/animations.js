@@ -54,7 +54,6 @@ class StickFigure {
     }
 }
 let figures = [];
-let canvas;
 const sketch = (p) => {
     p.setup = () => {
         const canvas = p.createCanvas(window.innerWidth, window.innerHeight);
@@ -67,13 +66,30 @@ const sketch = (p) => {
     p.draw = () => {
         p.background(255, 10); // Slight trail effect
         // Draw prison bars
+        p.push();
         p.stroke(0);
-        p.strokeWeight(5);
-        const barWidth = 20;
-        const barSpacing = 50;
+        p.strokeWeight(8);
+        p.strokeCap(p.SQUARE);
+        // Vertical bars
+        const barSpacing = 60;
         for (let x = 0; x < p.width; x += barSpacing) {
             p.line(x, 0, x, p.height);
         }
+        // Horizontal bars
+        const horizontalSpacing = 80;
+        for (let y = 0; y < p.height; y += horizontalSpacing) {
+            p.line(0, y, p.width, y);
+        }
+        // Add some shadow effect
+        p.stroke(0, 50);
+        p.strokeWeight(12);
+        for (let x = 0; x < p.width; x += barSpacing) {
+            p.line(x + 2, 0, x + 2, p.height);
+        }
+        for (let y = 0; y < p.height; y += horizontalSpacing) {
+            p.line(0, y + 2, p.width, y + 2);
+        }
+        p.pop();
         // Update and draw figures
         figures.forEach(figure => {
             figure.update();

@@ -217,3 +217,27 @@ button:active {
     color: #fff;
     transform: scale(1.05);
 }
+
+#dp-choice-screen {
+    text-align: center;
+    padding: 2rem;
+}
+
+#dp-choice-screen h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: -1px;
+}
+
+.button-group {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.button-group .overlay-btn {
+    min-width: 120px;
+}
