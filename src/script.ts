@@ -12,7 +12,6 @@ class InterviewSimulation {
     private gameScreen: HTMLElement;
     private endScreen: HTMLElement;
     private startButton: HTMLButtonElement;
-    private actionButton: HTMLButtonElement;
     private roleDisplay: HTMLElement;
     private timerDisplay: HTMLElement;
     private resultMessage: HTMLElement;
@@ -90,7 +89,6 @@ class InterviewSimulation {
         this.gameScreen = document.getElementById('game-screen')!;
         this.endScreen = document.getElementById('end-screen')!;
         this.startButton = document.getElementById('start-button') as HTMLButtonElement;
-        this.actionButton = document.getElementById('action-button') as HTMLButtonElement;
         this.roleDisplay = document.getElementById('role-display')!;
         this.timerDisplay = document.getElementById('timer')!;
         this.resultMessage = document.getElementById('result-message')!;
@@ -108,14 +106,18 @@ class InterviewSimulation {
         this.dpYesButton = document.getElementById('dp-yes-button') as HTMLButtonElement;
         this.dpNoButton = document.getElementById('dp-no-button') as HTMLButtonElement;
 
+        console.log('Initializing event listeners');
         // Bind event listeners
         this.startButton.addEventListener('click', () => this.startGame());
-        this.actionButton.addEventListener('click', () => this.handleAction());
         this.restartButton.addEventListener('click', () => this.startGame());
         this.submitAnswer.addEventListener('click', () => this.handleSubmit());
-        this.systemRestart.addEventListener('click', () => this.handleSystemRestart());
+        this.systemRestart.addEventListener('click', () => {
+            console.log('System restart button clicked');
+            this.handleSystemRestart();
+        });
         this.dpYesButton.addEventListener('click', () => this.handleDPChoice(true));
         this.dpNoButton.addEventListener('click', () => this.handleDPChoice(false));
+        console.log('Event listeners initialized');
     }
 
     private getRandomElement<T>(array: T[]): T {
@@ -150,25 +152,29 @@ class InterviewSimulation {
 
         // Update UI based on role
         if (this.role === 'interviewer') {
-            this.roleDisplay.textContent = 'You are the Interviewer (prison guard). Test the candidate\'s knowledge.';
-            this.actionButton.textContent = 'Ask LeetCode!';
+            this.roleDisplay.textContent = 'You are the Interviewer (prison guard).';
+            // Show both role display and dp choice screen for interviewer
+            this.startScreen.classList.add('hidden');
+            this.gameScreen.classList.remove('hidden');
+            this.dpChoiceScreen.classList.remove('hidden');
+            this.problemDisplay.classList.add('hidden');
+            this.answerSection.classList.add('hidden');
         } else {
-            this.roleDisplay.textContent = 'You are the Interviewee (prisoner). Show your problem-solving skills.';
-            this.actionButton.textContent = 'Solve It!';
+            this.roleDisplay.textContent = 'You are the Interviewee (prisoner).';
             // Show a problem immediately for interviewee
             this.currentQuestion = this.generateQuestion();
-            this.problemDisplay.classList.remove('hidden');
             this.problemTitle.textContent = this.currentQuestion.title;
             this.problemDescription.textContent = this.currentQuestion.description;
+
+            // Show game screen and answer section for interviewee
+            this.startScreen.classList.add('hidden');
+            this.gameScreen.classList.remove('hidden');
+            this.problemDisplay.classList.remove('hidden');
+            this.answerSection.classList.remove('hidden');
+            this.startAnswerTimer();
         }
 
-        // Show game screen
-        this.startScreen.classList.add('hidden');
-        this.gameScreen.classList.remove('hidden');
         this.endScreen.classList.add('hidden');
-        this.dpChoiceScreen.classList.add('hidden');
-        this.problemDisplay.classList.add('hidden');
-        this.answerSection.classList.add('hidden');
         this.answerInput.value = '';
 
         // Start timer
@@ -182,7 +188,11 @@ class InterviewSimulation {
         this.timerDisplay.textContent = this.timeLeft.toString();
 
         if (this.timeLeft <= 0) {
-            this.endGame(this.role === 'interviewer' ? 'MISSED OPPORTUNITY' : 'THOUGHT IT THROUGH');
+            if (this.timer) {
+                clearInterval(this.timer);
+                this.timer = null;
+            }
+            this.showSystemOverlay("No one here has authority over anyone else");
         }
     }
 
@@ -201,7 +211,7 @@ class InterviewSimulation {
             this.stopAnswerTimer();
             this.answerInput.disabled = true;
             this.submitAnswer.disabled = true;
-            this.showSystemOverlay("No one has authority over anyone else");
+            this.showSystemOverlay("No one here has authority over anyone else");
         }
     }
 
@@ -228,12 +238,16 @@ class InterviewSimulation {
     }
 
     private showFunnyResponse(): void {
-        const response = "No one has authority over anyone else";
+        const response = "No one here has authority over anyone else";
         this.resultMessage.innerHTML += `<br><br><strong>System:</strong> ${response}`;
         this.showSystemOverlay(response);
     }
 
     private showSystemOverlay(message: string): void {
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
         this.systemMessage.textContent = message;
         this.systemOverlay.classList.remove('hidden');
         // Hide the regular Try Again button
@@ -241,9 +255,31 @@ class InterviewSimulation {
     }
 
     private handleSystemRestart(): void {
+        console.log('System restart clicked');
+        // Clear any existing timers
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
+        }
+        if (this.answerTimer) {
+            clearInterval(this.answerTimer);
+            this.answerTimer = null;
+        }
+
+        // Hide all screens
         this.systemOverlay.classList.add('hidden');
-        this.restartButton.style.display = '';
-        this.startGame();
+        this.gameScreen.classList.add('hidden');
+        this.dpChoiceScreen.classList.add('hidden');
+        this.endScreen.classList.add('hidden');
+        this.problemDisplay.classList.add('hidden');
+        this.answerSection.classList.add('hidden');
+
+        // Show start screen
+        this.startScreen.classList.remove('hidden');
+
+        // Reset any input values
+        this.answerInput.value = '';
+        console.log('Game reset complete');
     }
 
     private endGame(message: string): void {
@@ -255,20 +291,11 @@ class InterviewSimulation {
         this.endScreen.classList.remove('hidden');
 
         if (this.role === 'interviewer' && this.currentQuestion) {
-            this.resultMessage.innerHTML = `${message}<br><br><strong>${this.currentQuestion.title}</strong><br>Difficulty: ${this.currentQuestion.difficulty}<br><br>${this.currentQuestion.description}`;
+            this.resultMessage.innerHTML = `<strong>${this.currentQuestion.title}</strong><br>Difficulty: ${this.currentQuestion.difficulty}<br><br>${this.currentQuestion.description}`;
             this.answerSection.classList.remove('hidden');
             this.startAnswerTimer();
         } else {
-            this.resultMessage.textContent = message;
-        }
-    }
-
-    private handleAction(): void {
-        if (this.role === 'interviewer') {
-            this.gameScreen.classList.add('hidden');
-            this.dpChoiceScreen.classList.remove('hidden');
-        } else {
-            this.endGame('TOOK THE CHALLENGE');
+            this.showSystemOverlay("No one here has authority over anyone else");
         }
     }
 
@@ -282,7 +309,7 @@ class InterviewSimulation {
             if (this.answerTimer) {
                 this.stopAnswerTimer();
             }
-            this.showSystemOverlay("No one has authority over anyone else");
+            this.showSystemOverlay(" h has authority over anyone else");
         }
     }
 
@@ -292,11 +319,11 @@ class InterviewSimulation {
         this.resultMessage.innerHTML = wantsDP ?
             'You chose to ask a dynamic programming question.<br><br>' :
             'You chose not to ask a dynamic programming question.<br><br>';
-        this.showSystemOverlay("No one has authority over anyone else");
+        this.showSystemOverlay("No one here has authority over anyone else");
     }
 
     private finalResponse(): void {
-        const response = "No one has authority over anyone else";
+        const response = "No one here has authority over anyone else";
         this.resultMessage.innerHTML += `<br><br><strong>System:</strong> ${response}`;
         this.showSystemOverlay(response);
     }

@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recurse Prison Experiment</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
 </head>
 <body>
     <div id="system-overlay" class="hidden">
         <div id="system-message"></div>
         <button id="system-restart" class="overlay-btn">Play Again</button>
     </div>
-    <div id="canvas-container"></div>
     <div class="container">
         <div id="start-screen">
             <h1>Recurse Prison Experiment</h1>
@@ -23,11 +21,14 @@
         <div id="game-screen" class="hidden">
             <div id="role-display"></div>
             <div id="timer">5</div>
-            <div id="problem-display" class="hidden">
+            <div id="problem-display">
                 <div id="problem-title"></div>
                 <div id="problem-description"></div>
             </div>
-            <button id="action-button"></button>
+            <div id="answer-section">
+                <textarea id="answer-input" placeholder="Type your solution here..."></textarea>
+                <button id="submit-answer">Submit Solution</button>
+            </div>
         </div>
 
         <div id="dp-choice-screen" class="hidden">
@@ -40,14 +41,9 @@
 
         <div id="end-screen" class="hidden">
             <div id="result-message"></div>
-            <div id="answer-section" class="hidden">
-                <textarea id="answer-input" placeholder="Type your solution here..."></textarea>
-                <button id="submit-answer">Submit Solution</button>
-            </div>
             <button id="restart-button">Try Again</button>
         </div>
     </div>
-    <script type="module" src="dist/animations.js"></script>
     <script type="module" src="dist/script.js"></script>
 </body>
 </html>
