@@ -247,7 +247,7 @@ class InterviewSimulation {
             if (this.answerTimer) {
                 this.stopAnswerTimer();
             }
-            this.showSystemOverlay(" h has authority over anyone else");
+            this.showSystemOverlay(" No one here has authority over anyone else");
         }
     }
     handleDPChoice(wantsDP) {
