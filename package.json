@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "A psychological browser game inspired by the Stanford Prison Experiment",
     "scripts": {
-        "build": "tsc",
+        "build": "tsc && cp index.html dist/ && cp styles.css dist/ && cp -r src/assets dist/",
         "watch": "tsc --watch",
         "dev": "concurrently \"npm run watch\" \"live-server --port=8000\""
     },
